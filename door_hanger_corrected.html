@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Door Hanger - Neighbors for Plain</title>
+<style>
+  /* Import Oswald Font */
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap');
+
+  * { 
+    box-sizing: border-box; 
+  }
+
+  body {
+    font-family: 'Oswald', sans-serif;
+    background-color: #d4d4d4; /* Screen background */
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* Space between front and back on screen */
+    padding: 40px;
+    margin: 0;
+  }
+
+  /* Door Hanger Container - Updated for Bleed */
+  .hanger {
+    width: 4.38in; 
+    height: 11.12in; 
+    background-color: #ffffff;
+    border: 1px solid #999;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Simulated Hole Cutout for Preview */
+  .hole-cutout {
+    position: absolute;
+    top: 0.5in;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1.25in;
+    height: 1.25in;
+    background-color: #d4d4d4;
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+  }
+
+  .hole-slit {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.25in;
+    height: 0.8in;
+    background-color: #d4d4d4;
+    z-index: 10;
+  }
+
+  /* --- FRONT DESIGN --- */
+  .front-header {
+    background-color: #0A1128;
+    color: #ffffff;
+    text-align: center;
+    padding: 2.1in 15px 15px 15px; /* Heavy top padding to clear the hole */
+    border-bottom: 6px solid #E5383B;
+  }
+
+  .front-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .candidates-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 12px 15px;
+    background-color: #f4f4f4;
+  }
+
+  .candidate-block {
+    height: 2.1in; /* Fixed height so photos don't stretch too large */
+    display: flex;
+    flex-direction: column;
+    border: 3px solid #0A1128;
+    background-color: #fff;
+  }
+
+  .photo-placeholder {
+    flex-grow: 1;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden; /* Ensures images stay inside the box */
+  }
+
+  .photo-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Crops/scales images cleanly to fit */
+    object-position: center 42%; /* Centered framing for faces */
+  }
+
+  .name-bar {
+    background-color: #0A1128;
+    color: #ffffff;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    padding: 3px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .front-footer {
+    background-color: #0A1128;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .front-footer .vote-text {
+    font-size: 26px;
+    font-weight: 700;
+    color: #E5383B;
+    margin-bottom: 5px;
+  }
+
+  .front-footer .url-text {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  /* --- BACK DESIGN --- */
+  .back-header {
+    background-color: #0A1128;
+    color: #ffffff;
+    text-align: center;
+    padding: 2.1in 15px 15px 15px; /* Heavy top padding to clear the hole */
+    border-bottom: 6px solid #E5383B;
+  }
+
+  .back-header h2 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .back-content {
+    padding: 10px 15px 15px 15px; 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 13px; /* Distinct break between boxes and footer */
+  }
+
+  /* Boxed Cards */
+  .card {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+  }
+
+  .card-navy { border: 3px solid #0A1128; }
+  .card-red { border: 3px solid #E5383B; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    color: #ffffff;
+  }
+
+  .bg-navy { background-color: #0A1128; }
+  .bg-red { background-color: #E5383B; }
+
+  .circle {
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .card-body {
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Typography inside Cards */
+  .text-navy { color: #0A1128; }
+  .text-red { color: #E5383B; }
+  .text-center { text-align: center; }
+  .font-bold { font-weight: 700; }
+
+  .card-subtitle {
+    font-size: 13.5px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .card-body p {
+    font-size: 11.5px;
+    color: #0A1128;
+    margin-top: 0;
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+
+  .content-list {
+    list-style-type: square;
+    padding-left: 16px;
+    font-size: 11px;
+    color: #0A1128;
+    margin: 4px 0 0 0;
+  }
+
+  .content-list li {
+    margin-bottom: 3.5px;
+    line-height: 1.25;
+  }
+
+  .sources {
+    font-size: 9px;
+    color: #555;
+    font-style: italic;
+    margin-top: 5px;
+  }
+
+  /* Footer on Back */
+  .back-footer {
+    margin-top: auto;
+    text-align: center;
+  }
+
+  .back-url {
+    background-color: #0A1128;
+    color: #ffffff;
+    font-size: 16px; /* Reduced from 22px to save space */
+    font-weight: 700;
+    padding: 4px; /* Reduced from 8px to save space */
+    margin-bottom: 6px; /* Reduced from 10px to save space */
+    letter-spacing: 1px;
+  }
+
+  .disclaimer {
+    font-size: 8px;
+    color: #0A1128;
+    border: 1px solid #0A1128;
+    padding: 5px; /* Reduced slightly */
+    text-transform: uppercase;
+    line-height: 1.1; /* Tightened line height */
+  }
+
+  /* --- PRINT SPECIFIC RULES - Updated for Bleed --- */
+  @page {
+    size: 4.38in 11.12in;
+    margin: 0;
+  }
+
+  @media print {
+    body {
+      background-color: #ffffff;
+      padding: 0;
+      margin: 0;
+      display: block; 
+    }
+    
+    .hanger {
+      border: none;
+      box-shadow: none;
+      page-break-after: always; 
+    }
+
+    .hole-cutout, .hole-slit {
+      background-color: #ffffff;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- FRONT OF DOOR HANGER -->
+<div class="hanger">
+  <div class="hole-slit"></div>
+  <div class="hole-cutout"></div>
+  
+  <header class="front-header">
+    <h1>NOFTZ, OSBUN, & SMITH FOR PLAIN TOWNSHIP BOARD</h1>
+  </header>
+
+  <div class="candidates-container">
+    <div class="candidate-block">
+      <div class="photo-placeholder">
+        <img src="rebecca.jpg" alt="Becca Noftz">
+      </div>
+      <div class="name-bar">Becca Noftz</div>
+    </div>
+    <div class="candidate-block">
+      <div class="photo-placeholder">
+        <img src="robert3.jpg" alt="Robert Osbun">
+      </div>
+      <div class="name-bar">Robert Osbun</div>
+    </div>
+    <div class="candidate-block">
+      <div class="photo-placeholder">
+        <img src="brian_beard.png" alt="Brian Smith">
+      </div>
+      <div class="name-bar">Brian Smith</div>
+    </div>
+  </div>
+
+  <footer class="front-footer">
+    <div class="vote-text">ON NOVEMBER 3, VOTE FOR 3!</div>
+    <div class="url-text">neighborsforplain.com</div>
+  </footer>
+</div>
+
+<!-- BACK OF DOOR HANGER -->
+<div class="hanger">
+  <div class="hole-slit"></div>
+  <div class="hole-cutout"></div>
+
+  <header class="back-header">
+    <h2>NOFTZ, OSBUN, & SMITH FOR PLAIN TOWNSHIP BOARD</h2>
+  </header>
+
+  <div class="back-content">
+
+    <!-- SECTION 1 -->
+    <div class="card card-navy">
+      <div class="card-header bg-navy">
+        <div class="circle bg-red">1</div>
+        <div class="card-title">WHAT IS A TOWNSHIP BOARD?</div>
+      </div>
+      <div class="card-body">
+        <div class="card-subtitle text-navy text-center">THE ELECTED CHECK ON THE TOWNSHIP TRUSTEE</div>
+        <p class="text-red font-bold" style="margin-bottom: 0;">The Plain Township Board...</p>
+        <ul class="content-list">
+          <li><span class="font-bold">Approves</span> budgets and contracts.</li>
+          <li><span class="font-bold">Reviews</span> township finances.</li>
+          <li><span class="font-bold">Sets</span> tax rates and salaries.</li>
+          <li><span class="font-bold">Public Safety</span> (Fire & EMS).</li>
+          <li><span class="font-bold">Funds</span> Township Assistance Program.</li>
+          <li><span class="font-bold">Protects</span> taxpayers through responsible oversight.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="card card-red">
+      <div class="card-header bg-red">
+        <div class="circle bg-navy">2</div>
+        <div class="card-title">THE CURRENT BOARD'S RECORD</div>
+      </div>
+      <div class="card-body">
+        <div class="card-subtitle text-red text-center">WHY INDEPENDENT OVERSIGHT IS NEEDED</div>
+        <ul class="content-list" style="margin-top: 0;">
+          <li>Lawn care contract to a relative; lawn care costs rose from $15,316 in 2021 to $34,065 in 2025.</li>
+          <li>Township jobs and contracts to spouses, relatives, and/or household members of Township officials.</li>
+          <li>Approved substantial 2026 salary increases: 37% for the Trustee and 50% for Township Board members.</li>
+          <li>Meetings are only publicized 48 hours in advance by a note on the Township office door.</li>
+        </ul>
+        <div class="sources">Sources: Indiana Gateway; Plain Township records and Board meeting minutes (7/17/2025).</div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="card card-navy">
+      <div class="card-header bg-navy">
+        <div class="circle bg-red">3</div>
+        <div class="card-title">WHY ELECT NOFTZ, OSBUN, & SMITH?</div>
+      </div>
+      <div class="card-body">
+        <p class="font-bold">Rebecca Noftz, Robert Osbun, and Brian Smith are committed to restoring oversight, transparency, and accountability to the Plain Township Board.</p>
+        <p class="text-red font-bold" style="margin-bottom: 0;">We will...</p>
+        <ul class="content-list">
+          <li>Protect fire, EMS, and township assistance funding and vote to roll back Township Board Member salary increases.</li>
+          <li>Use our budget authority to insist on merit based hiring and eliminate conflicts of interest.</li>
+          <li>Safeguard your tax dollars through competitive bidding for contracts.</li>
+          <li>Post meeting notices online, on social media, and in the local press.</li>
+          <li>Actively seek out and listen to the needs of the community.</li>
+	  <li>Publish assistance guidelines and simplify requests for help.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="back-footer">
+      <div class="back-url">neighborsforplain.com</div>
+      <div class="disclaimer">
+        Paid for by Noftz Osbun & Smith for Plain Township Board PAC, and authorized by Rebecca Noftz, Robert Osbun & Brian Smith.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
